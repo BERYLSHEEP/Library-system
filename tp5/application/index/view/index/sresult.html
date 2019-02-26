@@ -1,0 +1,177 @@
+{layout name="./common/father" \}
+<div class="container container-result ">
+    <div class="col-xs-1">
+        <select id="test">
+            <option   value="2">书名</option>
+            <option   value="1">任意词</option>
+            <option   value="3">作者</option>
+            <option   value="4">期刊名</option>
+            <option   value="5">出版社</option>
+        </select>
+    </div>
+    <div class="input-group col-xs-5">
+        <!--onkeydown="renter();"-->
+        <input id="resultInput" type="text" class="form-control" onkeydown="">
+        <span class="btn input-group-addon">搜索</span>
+    </div>
+
+    <div class="panel panel-result">
+        <div class="panel-heading">
+            共<a id="resultNum">0</a>条搜索记录
+        </div>
+        <div class="panel-body">
+            <!--搜索结果列表-->
+            <div class="result-list">
+            </div>
+
+            <div class="col-sm-5"></div>
+            <div class="pagination-result col-sm-3">
+                <ul class="pagination">
+                    <button type="button" id="pre">&laquo;上一页</button>
+                    <span id="showpage">1</span>
+                    <button type="button" id="next">&raquo;下一页</button>
+                </ul>
+            </div>
+            <div class="col-sm-4"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var le;//总共记录条数
+    var page=0;//页数，为了方便从0开始
+    var size=5;//一页条数
+    var totalpage;//总页数
+    var list;//储存内容
+
+    function find(res) {
+        console.log("find");
+        if(eval(res["result"])==1) {
+            le = eval(res.result_num);
+            $(".result-list").html("");
+            $("#resultNum").html(le);
+            //装载分页数据
+            list=new Array();
+            totalpage=Math.ceil(le/size);
+            $("#pre").attr("disabled");
+            if(totalpage==1){
+                $("#next").attr("disabled","disabled");
+            }
+            else{
+                $("#next").removeAttr("disabled");
+            }
+            for(var i=0;i<le;i++){
+                var annex = new Object();
+                annex.picture=res["data"][i]["picture"];
+                annex.bookid=res["data"][i]["bookid"];
+                annex.name=res["data"][i]["name"];
+                annex.author=res["data"][i]["author"];
+                annex.booktype=res["data"][i]["book_type"];
+                annex.publish=res["data"][i]["publish"];
+                annex.location=res["data"][i]["location"];
+                annex.comtent=res["data"][i]["content"];
+                annex.type=res["data"][i]["type"];
+                list.push(annex);
+            }
+            paging();
+            console.log(list);
+        }
+        else{
+            $("#resultNum").html(0);
+            $(".result-list").html("");
+            $(".pagination-result").hide();
+        }
+    }
+    //上一页
+    $("#pre").click(function () {
+        if(page>0){
+            page--;
+            paging();
+        }
+    });
+    //下一页
+    $("#next").click(function () {
+        page++;
+        paging();
+    });
+    //分页
+    function paging() {
+        var thtml="";
+        var curnumber = page*size;//当前页开始
+        var length = curnumber+size;//写一页开始
+        var curpage = page+1;
+
+        for(var i=curnumber;i<length;i++){
+            if(typeof(list[i])=="undefined")break;
+            thtml +=( '<div class="result-list-item clearfix ">' +
+                '<div class="col-sm-2"> <img src="__STATIC__/image/' + list[i].picture + '"></div>' +
+                '<div class="col-sm-10">' +
+                '<a class="bookname" href="/index/bookdetail/detail?book='+list[i].bookid+'">' +
+                list[i].name + '</a>'+
+                '<table>'+
+                '<tr ><td class="col-sm-3">作者</td><td>' + list[i].author + '</td> </tr> '+
+                '<tr><td class="col-sm-3">图书类型</td><td>' + list[i].booktype+ '</td> </tr> ' +
+                '<tr><td class="col-sm-3">出版社</td><td>' +list[i].publish+ '</td> </tr> ' +
+                '<tr><td class="col-sm-3">在馆位置</td><td>' + list[i].location + '</td> </tr> ' +
+                '<tr><td class="col-sm-3">索书号</td><td>' + list[i].bookid+ '</td> </tr> ' +
+                '</table>' +
+                '<p class="detail">' + list[i].comtent + '</p>' +
+                '</div></div><hr>'
+            );
+        }
+        if(page == totalpage-1){
+            $("#next").attr("disabled","disabled");
+        }
+        else{
+            $("#next").removeAttr("disabled");
+        }
+
+        if(page==0){
+            $("#pre").attr("disabled","disabled");
+        }
+        else{
+            $("#pre").removeAttr("disabled");
+        }
+
+        $(".result-list").html(thtml);
+        $("#showpage").text(curpage);
+    };
+
+    var thisurl = decodeURI(document.URL);
+    var getval = thisurl.split('?')[1];
+    var identify = getval.split("=")[1];
+    var words = getval.split("=")[2];
+
+    window.onload = function(){
+        console.log("onload");
+        $.ajax({
+            type:'post',
+            url: '/search',
+            dataType: 'json',
+            async: false,
+            data:{
+                "words":words,
+                "identify":identify
+            },
+            success:function (resD) {
+                let res=JSON.parse(resD);
+                console.log("onload-function!");
+                //更改布局
+                find(res);
+            },
+            error:function () {
+                console.log(555);
+            }
+        });
+        paging();
+    };
+    //返回搜索结果
+    $("span").click(function () {
+        window.location.href=encodeURI("/sresult?words="+$("#test option:selected").val()+"="+$("#resultInput").val());
+    });
+    document.onkeydown=function (e) {
+        if(e.keyCode==13){
+            window.location.href=encodeURI("/sresult?words="+$("#test option:selected").val()+"="+$("#resultInput").val());
+        }
+    };
+</script>

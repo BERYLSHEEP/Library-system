@@ -1,0 +1,64 @@
+{layout name="./common/father" \}
+
+<div class="container-mycomment">
+    <div class="col-lg-10">
+        <div class="panel">
+            <div class="panel-heading">评论列表</div>
+            <div class="panel-body">
+                <table class="table table-bordered">
+                    <thead>
+                    <th class="col-sm-2">书名</th>
+                    <th class="col-sm-2">评论时间</th>
+                    <th class="col-sm-1">评分</th>
+                    <th class="col-sm-7">评论内容</th>
+                    </thead>
+                    <tbody id="comment">
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="myfuntion col-lg-2">
+        <span class="btn btn-block" id="goto1">
+            借阅记录
+        </span>
+        <span class="btn btn-block" id="goto2">
+            我的评论
+        </span>
+        <span class="btn btn-block" id="goto3">
+            修改密码
+        </span>
+    </div>
+</div>
+
+<script>
+    window.onload=function () {
+        $.ajax({
+            type:'post',
+            url:'/bcomment',
+            async:false,
+            dataType:'json',
+            data:{},
+            success:function (resD) {
+                let res = JSON.parse(resD);
+                console.log(res);
+                //网页布局
+                $("#comment").html(" ");
+                var le = eval(res["com_num"]);
+                for(var i=(le-1);i>=0;i--){
+                    $("#comment").append(
+                        '<tr><td>'+res["mycom"][i]["bookname"]+'</td>'+
+                        '<td>'+res["mycom"][i]["comdate"]+'</td>'+
+                        '<td>'+res["mycom"][i]["compoint"]+'</td>'+
+                        '<td>'+res["mycom"][i]["content"]+'</td></tr>'
+                    );
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        });
+    }
+</script>

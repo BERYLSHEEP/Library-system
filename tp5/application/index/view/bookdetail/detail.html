@@ -1,0 +1,350 @@
+{layout name="./common/father" \}
+<div class="container container-detail">
+    <!--图书详情-->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <!--如何返回上一级的问题-->
+            <a id="goback">返回</a>
+        </div>
+        <div class="panel-body">
+            <div class="col-xs-2">
+                <div id="bookimg"></div>
+            </div>
+            <div class="col-xs-10">
+                <h3 id="bname"></h3>
+                <h5 id="showAu">作者：<abbr title="attribute"id="author"></abbr></h5>
+                <h5 id="showTr">译者：<abbr title="attribute"id="transfer"></abbr></h5>
+                <h5>图书分类：<abbr id="type"></abbr></h5>
+                <h5>出版社：<abbr id="public"></abbr></h5>
+                <h5>出版日期：<abbr id="public_date"></abbr></h5>
+                <h5>价格：￥<abbr id="price"></abbr></h5>
+                <h5>索引号：<abbr id="bid"></abbr></h5>
+                <p id="detail">
+                    <!--简介部分-->
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!--存储概览-->
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th class="col-sm-3">索书号</th>
+            <th class="col-sm-3">馆藏位置</th>
+            <th class="col-sm-2">剩余数量</th>
+            <th class="col-sm-5"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+            <td id="t1"></td>
+            <td id="t2"></td>
+            <td id="t3"></td>
+            <td>
+                <div class="col-sm-6"><button id="btn1" class="btn-block ">预约</button></div>
+                <div class="col-sm-6"><button id="btn2" class="btn-block ">借阅</button></div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!--评论-->
+    <div id="write">
+        <div class="col-lg-10">
+            <input type="text" class="form-control ">
+        </div>
+        <div class="col-lg-1">
+            <select id="point">
+                <option   value="5">5.0</option>
+                <option   value="4">4.0</option>
+                <option   value="3">3.0</option>
+                <option   value="2">2.0</option>
+                <option   value="1">1.0</option>
+            </select>
+        </div>
+        <div class=" col-lg-1">
+            <span id="combtn" class="btn btn-block">发表评论</span>
+        </div>
+    </div>
+    <div id="comment-section" class="panel panel-default">
+        <div class="panel-heading ">评论列表</div>
+        <div class="panel-body">
+            <div class="list-group comment">
+                <!--评论内容-->
+            </div>
+            <div class="col-sm-5"></div>
+            <div class="pagination-result col-sm-2">
+                <ul class="pagination">
+                    <button type="button" id="pre">&laquo;上一页</button>
+                    <span id="showpage">1</span>
+                    <button type="button" id="next">&raquo;下一页</button>
+                </ul>
+            </div>
+            <div class="col-sm-5"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var bt;//图书类型
+
+    var thisurl = decodeURI(document.URL);
+    var getval = thisurl.split('?')[1];
+    //索书号
+    var id = getval.split("=")[1];
+
+    //分页变量
+    var le;//总共记录条数
+    var page=0;//页数，为了方便从0开始
+    var size=5;//一页条数
+    var totalpage;//总页数
+    var list;//储存内容
+
+    window.onload=function () {
+        console.log(id);
+        //获得图书信息
+        $.ajax({
+            type:'post',
+            url:'/getInfo',
+            dataType:'json',
+            async:false,
+            data:{
+                bookid:id
+            },
+            success:function (resD) {
+                let res = JSON.parse(resD);
+                if(eval(res["result"])==1) {
+                    bt = res["data"][0]["type"];//用于给后端数据
+                    $("#bookimg").html(
+                        '<img src="__STATIC__/image/'+res["data"][0]["picture"]+'">'
+                    );
+                    $("#bname").html(res["data"][0]["name"]);
+                    $("#detail").html(res["data"][0]["intro"]);
+                    $("#public").html(res["data"][0]["publish"]);
+                    $("#public_date").html(res["data"][0]["publish_time"]);
+                    $("#price").html(res["data"][0]["price"]);
+                    $("#type").html(res["data"][0]["book_type"]);
+                    $("#bid").html(id);
+                    //图书或期刊的判断
+                    console.log(res);
+                    if(eval(res["data"][0]["type"]) == 0){
+                        $("#showAu").hide();
+                        $("#showTr").hide();
+                        $("#btn1").hide();
+                        $("#btn2").hide();
+                    }
+                    else{
+                        $("#author").html(
+                            '['+res["data"][0]["author_country"]+']'+res["data"][0]["author"]
+                        );
+                        $("#transfer").html(res["data"][0]["translator"]);
+                    }
+                    $("#t1").html(id);
+                    $("#t2").html(res["data"][0]["location_name"]+'&nbsp;&nbsp;'+res["data"][0]["location"]);
+                    $("#t3").html(res["data"][0]["quantity"]);
+                }
+                else{
+                    alert("not found");
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        });
+        //获得评论信息
+        $.ajax({
+            type:'post',
+            url:'/getComment',
+            dataType:'json',
+            async:false,
+            data:{
+                bookid:id,
+                type:bt,
+            },
+            success:function (resD) {
+                let res = JSON.parse(resD);
+                $(".comment").html(" ");
+                le = eval(res["result_num"]);
+                if(le>0){
+                    //装载分页
+                    list = new Array();
+                    totalpage=Math.ceil(le/size);
+                    $("#pre").attr("disabled");
+                    if(totalpage==1){
+                        $("#next").attr("disabled","disabled");
+                    }
+                    else{
+                        $("#next").removeAttr("disabled");
+                    }
+                    for(var i = 0; i <le; i++){
+                        var annex = new Object();
+                        annex.point=res["comment"][i]["point"];
+                        annex.time=res["comment"][i]["time"];
+                        annex.comment=res["comment"][i]["comment"];
+                        list.push(annex);
+                    }
+                    paging();
+                }
+                else{
+                    $(".comment").html("暂无评论");
+                    $("#pre").attr("disabled","disabled");
+                    $("#next").attr("disabled","disabled");
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        });
+    };
+
+    //上一页
+    $("#pre").click(function () {
+        if(page>0){
+            page--;
+            paging();
+        }
+    });
+    //下一页
+    $("#next").click(function () {
+        page++;
+        paging();
+    });
+    //分页
+    function paging() {
+        var thtml="";
+        var curnumber = page*size;//当前页开始
+        var length = curnumber+size;//写一页开始
+        var curpage = page+1;
+
+        for(var i=curnumber;i<length;i++){
+            if(typeof(list[i])=="undefined")break;
+            thtml +=(
+                '<div class="list-group-item comment-item">'+
+                '<div class="list-group-item-heading">'+
+                '</div><div class="point col-xs-2"><p>'+list[i].point+'</p></div>'+
+                '<div class="date col-xs-10"><p>'+list[i].time+'</p></div>'+
+                '<div class="list-group-item-text"><h5>'+list[i].comment+'</h5></div></div>'
+            );
+        }
+        if(page == totalpage-1){
+            $("#next").attr("disabled","disabled");
+        }
+        else{
+            $("#next").removeAttr("disabled");
+        }
+
+        if(page==0){
+            $("#pre").attr("disabled","disabled");
+        }
+        else{
+            $("#pre").removeAttr("disabled");
+        }
+
+        $(".comment").html(thtml);
+        $("#showpage").text(curpage);
+    };
+
+    //返回上一级
+    $("#goback").click(function () {
+
+        window.location.href=document.referrer;
+    });
+
+    //预约
+    $("#btn1").click(function () {
+        $.ajax({
+            type:'post',
+            url:'/bookdetail/isAppointment',
+            async:false,
+            dataType:'json',
+            data:{
+                book_id:id,
+            },
+            success:function (resD) {
+                let res = JSON.parse(resD);
+                if(res["isSucceed"]==1){
+                    alert("预约成功！");
+                    window.location.reload();
+                }
+                else{
+                    if(res["error"]==1){alert("信用值不足！");}
+                    if(res["error"]==2){alert("尚有罚款未提交！");}
+                    if(res["error"]==3){alert("已达到借阅上限！");}
+                    if(res["error"]==4){alert("已经预约过该书！");}
+                    if(res["error"]==5){alert("已经借阅过该书！");}
+                    if(res["error"]==6){alert("请用户先登录再预约！");}
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        });
+    });
+    //借书
+    $("#btn2").click(function () {
+        $.ajax({
+            type:'post',
+            url:'/bookdetail/isBorrow',
+            async:false,
+            dataType:'json',
+            data:{
+                book_id:id
+            },
+            success:function (resD) {
+                let res = JSON.parse(resD);
+                if(res["isSucceed"]==1){
+                    alert("借阅成功！");
+                    window.location.reload();
+                }
+                else{
+                    if(res["error"]==1){alert("信用值不足！");}
+                    if(res["error"]==2){alert("尚有罚款未提交！");}
+                    if(res["error"]==3){alert("已达到借阅上限！");}
+                    if(res["error"]==4){alert("已经借阅过该书！");}
+                    if(res["error"]==5){alert("请用户先登录再借书！");}
+                    if(res["error"]==6){alert("该书目前不在馆中，请预约！");}
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        });
+    });
+    
+    //提交评论
+    $("#combtn").click(function () {
+        console.log(id);
+        console.log($("#point option:selected").val());
+        console.log(bt);
+        console.log($("input").val());
+        $.ajax({
+            type:'post',
+            async:false,
+            url:'/comment',
+            dataType:'json',
+            data:{
+                book_id:id,
+                point:$("#point option:selected").val(),
+                type:bt,
+                comment:$("input").val()
+            },
+            success:function (resD) {
+                let res = JSON.parse(resD);
+                //如果用户不存在
+                if(res["error"]==1){
+                    alert("请用户先登录再评论");
+                }
+                else{
+                    alert("评论成功！");
+                    window.location.href=encodeURI("/index/bookdetail/detail?book="+id);
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        });
+    });
+</script>
+</html>

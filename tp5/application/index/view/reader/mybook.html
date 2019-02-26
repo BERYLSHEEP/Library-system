@@ -1,0 +1,202 @@
+{layout name="./common/father" \}
+
+<div class="container-mybook">
+    <div class="col-lg-10">
+        <div class="panel">
+            <div class="panel-heading">借阅列表</div>
+            <div class="panel-body">
+                <table class="table table-bordered">
+                    <thead>
+                    <th class="col-sm-2">书名</th>
+                    <th class="col-sm-1">作者</th>
+                    <th class="col-sm-2">借阅时间</th>
+                    <th class="col-sm-2">到期时间</th>
+                    <th class="col-sm-2">归还时间</th>
+                    <th class="col-sm-3"></th>
+                    </thead>
+                    <tbody id="borrow">
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-heading">预约列表</div>
+            <div class="panel-body">
+                <table class="table table-bordered">
+                    <thead>
+                    <th class="col-sm-4">书名</th>
+                    <th class="col-sm-4">预约时间</th>
+                    <th class="col-sm-4"></th>
+                    </thead>
+                    <tbody id="appoint">
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="myfuntion col-lg-2">
+        <span class="btn btn-block" id="goto1">
+            借阅记录
+        </span>
+        <span class="btn btn-block" id="goto2">
+            我的评论
+        </span>
+        <span class="btn btn-block" id="goto3">
+            修改密码
+        </span>
+    </div>
+</div>
+
+<script>
+    //续借
+    function borrow(t){
+        console.log(t);
+        $.ajax({
+            type:'post',
+            url:'/renew',
+            async:false,
+            dataType:'json',
+            data:{
+                bookid:t
+            },
+            success:function (resD) {
+                let res = JSON.parse(resD);
+                if(res["isSucceed"]==0){
+                    alert("续借成功！");
+                    window.location.reload();
+                }
+                else{
+                    if(res["error"]==0)
+                        alert("逾期未还，不能续借");
+                    else{
+                        alert("已有人预约，无法续借");
+                    }
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        })
+    };
+    //归还
+    function ret(t){
+        console.log(t);
+        $.ajax({
+            type:'post',
+            url:'/returnbook',
+            async:false,
+            dataType:'json',
+            data:{
+                bookid:t
+            },
+            success:function (resD) {
+                let res = JSON.parse(resD);
+                console.log(res);
+                if(res["isSucceed"]==1){
+                    alert("归还成功！");
+                    window.location.reload();
+                }
+                else{
+                    alert("逾期未还，请前往管理员处交罚款");
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        })
+    };
+    //取消预约
+    function cancel(t){
+        $.ajax({
+            type:'post',
+            url:'/cancelapply',
+            async:false,
+            dataType:'json',
+            data:{
+                bookid:t
+            },
+            success:function (resD) {
+                let res = JSON.parse(resD);
+                if(res["isSucceed"]==1){
+                    alert("预约已取消！");
+                    window.location.reload();
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        })
+    };
+    
+    window.onload=function () {
+        $.ajax({
+            type:'post',
+            url:'/borrow',
+            async:false,
+            dataType:'json',
+            data:{},
+            success:function (resD) {
+                let res = JSON.parse(resD);
+                console.log(res);
+                //网页布局
+                $("#borrow").html(" ");
+                var le = eval(res["borrow_num"]);
+                for(var i=0;i<le;i++){
+                    var thtml="";
+                    thtml+=(
+                        '<tr><td>'+res["borrow_data"][i]["bookname"]+'</td>'+
+                        '<td>'+res["borrow_data"][i]["author"]+'</td>'+
+                        '<td>'+res["borrow_data"][i]["sdate"]+'</td>'+
+                        '<td>'+res["borrow_data"][i]["edate"]+'</td>'+
+                        '<td>'+res["borrow_data"][i]["rdate"]+'</td>'+
+                        '<td>'
+                    );
+                    if(res["borrow_data"][i]["rdate"]==null){
+                        thtml+=(
+                            '<div class="col-lg-6">'+
+                            '<button class="btn1 btn-block" onclick=" borrow(\''+res["borrow_data"][i]["bookid"]+'\')">续借</button></div>'+
+                            '<div class="col-lg-6">'+
+                            '<button class="btn2 btn-block" onclick=" ret(\''+res["borrow_data"][i]["bookid"]+'\')">归还'+
+                            '</button></div>'
+                        );
+                    }
+                    thtml+='</td></tr>';
+                    $("#borrow").append(thtml);
+
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        });
+        $.ajax({
+            type:'post',
+            url:'/bappointment',
+            async:false,
+            dataType:'json',
+            data:{},
+            success:function (resD) {
+                let res = JSON.parse(resD);
+                console.log(res);
+                //网页布局
+                $("#appoint").html(" ");
+                var le = eval(res["app_num"]);
+                for(var i=0;i<le;i++){
+                    $("#appoint").append(
+                            '<tr><td>'+res["myapp"][i]["bookname"]+'</td>'+
+                        '<td>'+res["myapp"][i]["appdate"]+'</td>'+
+                        '<td><button class="btn3" onclick="cancel(\''+res["myapp"][i]["bookid"]+'\')">取消预约</button></td></tr>'
+                    );
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        })
+    }
+</script>

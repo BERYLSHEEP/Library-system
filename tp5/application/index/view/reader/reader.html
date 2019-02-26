@@ -1,0 +1,218 @@
+{layout name="./common/father" \}
+<div class="container-reader">
+    <div class="panel col-lg-10">
+        <div class="panel-heading">用户信息</div>
+        <div class="list-group list-group-reader">
+            <div class="list-group-item">
+                <p class="list-group-item-text">
+                <div class="col-sm-2">学号/教职工号</div>
+                <div id="user" class="col-sm-10"></div>
+                <br>
+                </p>
+            </div>
+            <div class="list-group-item">
+                <p class="list-group-item-text">
+                <div class="col-sm-2">姓名</div>
+                <div id="username" class="col-sm-10"></div>
+                <br>
+                </p>
+            </div>
+            <div class="list-group-item">
+                <p class="list-group-item-text">
+                <div class="col-sm-2">类型</div>
+                <div id="type" class="col-sm-10"></div>
+                <br>
+                </p>
+            </div>
+            <div class="list-group-item">
+                <p class="list-group-item-text">
+                <div class="col-sm-2">开户日期</div>
+                <div id="date" class="col-sm-10"></div>
+                <br>
+                </p>
+            </div>
+            <div class="list-group-item">
+                <p class="list-group-item-text">
+                <div class="col-sm-2">邮箱</div>
+                <div id="mail" class="col-sm-9"></div>
+                <div class="col-sm-1">
+                    <sanp class="btn btn-info" id="modifymail">修改</sanp>
+                    <sanp class="btn btn-info" id="finishmail">完成</sanp>
+                </div>
+                <br>
+                </p>
+            </div>
+            <div class="list-group-item">
+                <p class="list-group-item-text">
+                <div class="col-sm-2">电话号码</div>
+                <div id="phone" class="col-sm-9"></div>
+                <div class="col-sm-1">
+                    <sanp class="btn btn-info" id="modifytel">修改</sanp>
+                    <sanp class="btn btn-info" id="finishtel">完成</sanp>
+                </div>
+                <br>
+                </p>
+            </div>
+            <div class="list-group-item">
+                <p class="list-group-item-text">
+                <div class="col-sm-2">已借阅</div>
+                <div id="bro" class="col-sm-10"></div>
+                <br>
+                </p>
+            </div>
+            <div class="list-group-item">
+                <p class="list-group-item-text">
+                <div class="col-sm-2">信用分数</div>
+                <div id="cerdit"class="col-sm-10"></div>
+                <br>
+                </p>
+            </div>
+            <div class="list-group-item">
+                <p class="list-group-item-text">
+                <div class="col-sm-2">欠费情况</div>
+                <div id="money" class="col-sm-10"></div>
+                <br>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="myfuntion col-lg-2">
+        <span class="btn btn-block" id="goto1">
+            借阅记录
+        </span>
+        <span class="btn btn-block" id="goto2">
+            我的评论
+        </span>
+        <span class="btn btn-block" id="goto3">
+            修改密码
+        </span>
+    </div>
+</div>
+
+<script>
+    //加载个人信息
+    window.onload=function () {
+        $("#finishmail").hide();
+        $("#finishtel").hide();
+        $.ajax({
+            type:'post',
+            url:'/info',
+            dataType:'json',
+            async:false,
+            data:{},
+            success:function(resD){
+                let res = JSON.parse(resD);
+                console.log(res);
+                $("#user").html(res["readers"][0]["readerid"]);
+                $("#username").html(res["readers"][0]["readername"]);
+                $("#type").html(res["readers"][0]["readertype"]);
+                $("#date").html(res["readers"][0]["readerdate"]);
+                $("#mail").html(res["readers"][0]["readermail"]);
+                $("#phone").html(res["readers"][0]["readertel"]);
+                $("#bro").html(res["readers"][0]["borrowedquantity"]);
+                $("#credit").html(res["readers"][0]["readercredit"]);
+                $("#money").html(res["readers"][0]["arrear"]);
+            },
+            error:function () {
+                console.log(555);
+            }
+        })
+    };
+
+    //修改邮箱
+    $("#modifymail").click(function () {
+        $("#mail").html(
+            '<form id="mailform" class="form-horizontal" role="form">'+
+            '<input id="newmail" type="text" name="newmail" class="form-control"></form>'
+        );
+        $("#modifymail").hide();
+        $("#finishmail").show();
+    });
+    $("#finishmail").click(function () {
+        $.ajax({
+            type:'post',
+            url:'/afmodifymail',
+            async: false,
+            dataType:'json',
+            data:{
+                newmail:$("#newmail").val()
+            },
+            success:function (resD) {
+                let res = JSON.parse(resD);
+                console.log(res);
+                if(res["isSucceed"]==0){
+                    $("#mail").html($("#newmail").val());
+                    $("#modifymail").show();
+                    $("#finishmail").hide();
+                }
+                else{
+                    alert("修改失败");
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        });
+    });
+    //修改电话
+    $("#modifytel").click(function () {
+        $("#phone").html(
+            '<form id="telform" class="form-horizontal" role="form">'+
+            '<input id="newtel" type="text" name="newtel" class="form-control"></form>'
+        );
+        $("#modifytel").hide();
+        $("#finishtel").show();
+    });
+    $("#finishtel").click(function () {
+        $.ajax({
+            type:'post',
+            url:'/afmodifyte',
+            async: false,
+            dataType:'json',
+            data:{
+                newtele:$("#newtel").val()
+            },
+            success:function (resD) {
+                let res = JSON.parse(resD);
+                if(res["isSucceed"]==0){
+                    $("#phone").html($("#newtel").val());
+                    $("#modifytel").show();
+                    $("#finishtel").hide();
+                }
+                else{
+                    alert("修改失败");
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        })
+    });
+
+    //表单验证失败
+    $().ready(function () {
+        $("#mailform").validate({
+            rules:{
+                newmail:{
+                    required:true,
+                    mail:true
+                }
+            },
+            messages:{
+                newmail:"请输入正确的邮件地址"
+            }
+        });
+        $("#telform").validate({
+            rules:{
+                newtel:{
+                    required:true,
+                    minlength:11,
+                    maxlength:11
+                }
+            },
+            messages:{
+                newtel:"请输入正确的联系电话"
+            }
+        });
+    });
+</script>

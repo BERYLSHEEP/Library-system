@@ -1,0 +1,334 @@
+{layout name="./common/father" \}
+
+<div class="container-booklist">
+    <!--分类模块-->
+    <div class="col-lg-3 section1">
+        <div class="panel">
+            <div class="panel-heading">图书分类</div>
+            <div class="panel-body">
+                <table class="table ">
+                    <tbody>
+                    <tr>
+                        <td>A</td>
+                        <td><a onclick="k('A')">政治</a></td>
+                    </tr>
+                    <tr>
+                        <td>B</td>
+                        <td><a onclick="k('B')">哲学、宗教</a></td>
+                    </tr>
+                    <tr>
+                        <td>C</td>
+                        <td><a onclick="k('C')">社会科学总论</a></td>
+                    </tr>
+                    <tr>
+                        <td>D</td>
+                        <td><a onclick="k('D')">政治、法律</a></td>
+                    </tr>
+                    <tr>
+                        <td>E</td>
+                        <td><a onclick="k('E')">军事</a></td>
+                    </tr>
+                    <tr>
+                        <td>F</td>
+                        <td><a onclick="k('F')">经济</a></td>
+                    </tr>
+                    <tr>
+                        <td>G</td>
+                        <td><a onclick="k('G')">文化科学、教育、体育</a></td>
+                    </tr>
+                    <tr>
+                        <td>H</td>
+                        <td><a onclick="k('H')">语言、文字</a></td>
+                    </tr>
+                    <tr>
+                        <td>I</td>
+                        <td><a onclick="k('I')">文学</a></td>
+                    </tr>
+                    <tr>
+                        <td>K</td>
+                        <td><a onclick="k('K')">历史、地理</a></td>
+                    </tr>
+                    <tr>
+                        <td>N</td>
+                        <td><a onclick="k('N')">自然科学总论</a></td>
+                    </tr>
+                    <tr>
+                        <td>O</td>
+                        <td><a onclick="k('O')">数理科学和化学</a></td>
+                    </tr>
+                    <tr>
+                        <td>P</td>
+                        <td><a onclick="k('P')">天文学、地球科学</a></td>
+                    </tr>
+                    <tr>
+                        <td>Q</td>
+                        <td><a onclick="k('Q')">生物科学</a></td>
+                    </tr>
+                    <tr>
+                        <td>R</td>
+                        <td><a onclick="k('R')">医药、卫生</a></td>
+                    </tr>
+                    <tr>
+                        <td>S</td>
+                        <td><a onclick="k('S')">农业科学</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <!--中间传值用-->
+                <input id="li" type="hidden">
+            </div>
+        </div>
+    </div>
+    <!--搜索结果模块-->
+    <div class=" col-lg-7">
+        <div class="type-list">
+        </div>
+        <div class="col-sm-4"></div>
+        <div class="pagination-result col-sm-4">
+            <ul class="pagination">
+                <button type="button" id="pre">&laquo;上一页</button>
+                <span id="showpage">1</span>
+                <button type="button" id="next">&raquo;下一页</button>
+            </ul>
+        </div>
+        <div class="col-sm-4"></div>
+    </div>
+
+    <!--热门图书模块-->
+    <div class="col-lg-2 section3">
+        <div id="hotbook">
+            <div class="panel">
+                <div class="panel-heading">热门书籍</div>
+                <div class="panel-body">
+                    <div class="hot-item">
+                        <p id="hb1">1.书名</p>
+                        <div id="hbd1"></div>
+                    </div>
+                    <hr>
+                    <div class="hot-item">
+                        <p id="hb2">2.书名</p>
+                        <div id="hbd2"></div>
+                    </div>
+                    <hr>
+                    <div class="hot-item">
+                        <p id="hb3">3.书名</p>
+                        <div id="hbd3"></div>
+                    </div>
+                    <hr>
+                    <div class="hot-item">
+                        <p id="hb4">4.书名</p>
+                        <div id="hbd4"></div>
+                    </div>
+                    <hr>
+                    <div class="hot-item">
+                        <p id="hb5">5.书名</p>
+                        <div id="hbd5"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="hotj">
+            <div class="panel">
+                <div class="panel-heading">热门期刊</div>
+                <div class="panel-body">
+                    <div class="hot-item">
+                        <p id="hj1" ></p>
+                    </div>
+                    <hr>
+                    <div class="hot-item">
+                        <p id="hj2"></p>
+                    </div>
+                    <hr>
+                    <div class="hot-item">
+                        <p id="hj3" ></p>
+                    </div>
+                    <hr>
+                    <div class="hot-item">
+                        <p id="hj4"></p>
+                    </div>
+                    <hr>
+                    <div class="hot-item">
+                        <p id="hj5"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function k(s){
+        $("#li").val(s);
+    }
+
+    var le;//总共记录条数
+    var page=0;//页数，为了方便从0开始
+    var size=5;//一页条数
+    var totalpage;//总页数
+    var list ;//储存内容
+
+    //分页
+    function paging() {
+        var thtml="";
+        var curnumber = page*size;//当前页开始
+        var length = curnumber+size;//写一页开始
+        var curpage = page+1;
+
+        for(var i=curnumber;i<length;i++){
+            if(typeof(list[i])=="undefined")break;
+            thtml +=( '<div class="result-list-item clearfix">' +
+                '<div class="col-sm-2"> <img src="__STATIC__/image/' + list[i].picture + '"></div>' +
+                '<div class="col-sm-10">' +
+                '<a class="bookname" href="/index/bookdetail/detail?book='+list[i].bookid+'">' +
+                list[i].name + '</a>' +
+                '<table>'+
+                '<tr ><td class="col-sm-3">作者</td><td>' + list[i].author + '</td> </tr> '+
+                '<tr><td class="col-sm-3">图书类型</td><td>' + list[i].booktype+ '</td> </tr> ' +
+                '<tr><td class="col-sm-3">出版社</td><td>' +list[i].publish+ '</td> </tr> ' +
+                '<tr><td class="col-sm-3">在馆位置</td><td>' + list[i].location + '</td> </tr> ' +
+                '<tr><td class="col-sm-3">索书号</td><td>' + list[i].bookid+ '</td> </tr> ' +
+                '</table>' +
+                '<p class="detail">' + list[i].comtent + '</p>' +
+                '</div>'+
+                '</div><hr>');
+        }
+        if(page == totalpage-1){
+            $("#next").attr("disabled","disabled");
+        }
+        else{
+            $("#next").removeAttr("disabled");
+        }
+
+        if(page==0){
+            $("#pre").attr("disabled","disabled");
+        }
+        else{
+            $("#pre").removeAttr("disabled");
+        }
+
+        $(".type-list").html(thtml);
+        $("#showpage").text(curpage);
+    };
+    //根据类型查找
+    var ts;
+    function tsearch(){
+        $.ajax({
+            type:'post',
+            url:'/typeSearch',
+            async:false,
+            dataType:'json',
+            data:{
+                type:ts
+            },
+            success:function (resD) {
+                let res = JSON.parse(resD);
+                if(eval(res["result"])==1) {
+                    $(".pagination").show();
+                    $(".type-list").html("");
+
+                    le = eval(res["result_num"]);
+                    //装载分页数据
+                    list=new Array();
+                    totalpage=Math.ceil(le/size);
+                    $("#pre").attr("disabled");
+                    if(totalpage==1){
+                        $("#next").attr("disabled","disabled");
+                    }
+                    else{
+                        $("#next").removeAttr("disabled");
+                    }
+                    for(var i=0;i<le;i++){
+                        var annex = new Object();
+                        annex.picture=res["data"][i]["picture"];
+                        annex.bookid=res["data"][i]["bookid"];
+                        annex.name=res["data"][i]["name"];
+                        annex.author=res["data"][i]["author"];
+                        annex.booktype=res["data"][i]["book_type"];
+                        annex.publish=res["data"][i]["publish"];
+                        annex.location=res["data"][i]["location"];
+                        annex.comtent=res["data"][i]["content"];
+                        list.push(annex);
+                    }
+                    console.log(list);
+                    paging();
+                }
+                else{
+                    $(".type-list").html("没有该类型书籍。");
+                    $(".pagination").hide();
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        });
+    }
+    $("a").click(function () {
+        ts= $("#li").val();
+        tsearch();
+    });
+    //上一页
+    $("#pre").click(function () {
+        if(page>0){
+            page--;
+            paging();
+        }
+    });
+    //下一页
+    $("#next").click(function () {
+        page++;
+        paging();
+    });
+
+    //热门
+    window.onload=function () {
+        ts = 'C';
+        tsearch();
+        $(".pagination").hide();
+        $.ajax({
+            type:'post',
+            url:'/Index/hotBook',
+            async: false,
+            dataType:'json',
+            data:{},
+            success:function (resD) {
+                console.log(resD);
+                let res=JSON.parse(resD);
+                for(var i =0;i<5;i++){
+                    $("#hb"+(i+1)).html(
+                        '<div class="col-sm-8">'+//(i+1)+'&nbsp;&nbsp;'+
+                        '<a style="display: block" href="/index/bookdetail/detail?book='+res["book_data"][i]["bookid"]+'">'+
+                        res["book_data"][i]["name"]+'</a></div>'+
+                        '<div class="col-sm-4">'+res["book_data"][i]["point"]+'</div>'+
+                        '<div><img src="__STATIC__/image/'+res["book_data"][i]["picture"]+'"></div>'
+                    );
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        });
+        $.ajax({
+            type:'post',
+            url:'/Index/hotJournal',
+            async: false,
+            dataType:'json',
+            data:{},
+            success:function (resD) {
+                let res=JSON.parse(resD);
+                console.log(res);
+                for(var i =0;i<5;i++){
+                    $("#hj"+(i+1)).html(
+                        '<div class="col-sm-8">'+//(i+1)+'&nbsp;&nbsp;'+
+                        '<a href="/index/bookdetail/detail?book='+res["journal_data"][i]["bookid"]+'">'+
+                        res["journal_data"][i]["name"]+'</a></div>'+
+                        '<div class="col-sm-4">'+res["journal_data"][i]["point"]+'</div>'+
+                        '<div><img src="__STATIC__/image/'+res["journal_data"][i]["picture"]+'"></div>'
+                    );
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        })
+    }
+</script>

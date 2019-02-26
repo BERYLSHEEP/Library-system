@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="sty.css">
+
+
+
+</head>
+<body>
+
+<!--原本的链接：action="http://libraysystem.hd/admin/index/check"-->
+<!--改之后的链接：action="http://localhost:8080/admin/index/check"-->
+<div class="container">
+    <form action="http://localhost:8080/admin/index/check" method="post" class="form-horizontal" id="login" role="form">
+    <div class="form row">
+        <div class="form-horizontal col-md-offset-3" id="login_form">
+            <h3 class="form-title">后台登录</h3>
+            <div class="col-md-9">
+                <div class="form-group">
+                    <i class="fa fa-user fa-lg"></i>
+                    <input class="form-control required" type="text" placeholder="UserId" id="manId" name="man_id" autofocus="autofocus" maxlength="20"/>
+                </div>
+                <div class="form-group">
+                    <i class="fa fa-lock fa-lg"></i>
+                    <input class="form-control required" type="password" placeholder="Password" id="manPassword" name="man_password" maxlength="20"/>
+                </div>
+                <div class="form-group">
+                    <i class="fa fa-lock fa-lg"></i>
+                    <input class="form-control required" type="code" placeholder="Password" id="code" name="code" maxlength="20"/>
+                </div>
+                <div id="vode"><img src="{:captcha_src()}" alt="captcha" /></div>
+
+                <div class="form-group">
+                    <label class="checkbox">
+                        <input type="checkbox" name="remember" value="1"/>记住我
+                    </label>
+                </div>
+                <div class="form-group col-md-offset-9">
+                    <button type="submit" class="btn btn-success pull-right" name="submit">登录</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+</div>
+
+</body>
+</html>
+<script>
+    $("#vode img").click(function(){
+        $(this).attr("src",$(this).attr("src").substring(0,13)+"?"+Math.random());
+    });
+</script>

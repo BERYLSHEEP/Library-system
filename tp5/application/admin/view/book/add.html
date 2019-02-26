@@ -1,0 +1,266 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="__STATIC__/js/html5.js"></script>
+	<script type="text/javascript" src="__STATIC__/js/respond.min.js"></script>
+	<script type="text/javascript" src="__STATIC__/js/PIE_IE678.js"></script>
+	<![endif]-->
+	<link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="__STATIC__/css/style.css"/>
+	<link href="assets/css/codemirror.css" rel="stylesheet">
+	<link rel="stylesheet" href="__STATIC__/assets/css/ace.min.css" />
+	<link rel="stylesheet" href="__STATIC__/Widget/zTree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+	<link rel="stylesheet" href="__STATIC__/assets/css/font-awesome.min.css" />
+	<!--[if IE 7]>
+	<link rel="stylesheet" href="__STATIC__/assets/css/font-awesome-ie7.min.css" />
+	<![endif]-->
+	<link href="__STATIC__/Widget/icheck/icheck.css" rel="stylesheet" type="text/css" />
+	<link href="__STATIC__/Widget/webuploader/0.1.5/webuploader.css" rel="stylesheet" type="text/css" />
+
+	<title>添加书籍</title>
+</head>
+<body>
+<script src="__STATIC__/js/jquery-1.9.1.min.js"></script>
+<script src="__STATIC__/assets/js/bootstrap.min.js"></script>
+<script src="__STATIC__/assets/js/typeahead-bs2.min.js"></script>
+<script src="__STATIC__/assets/layer/layer.js" type="text/javascript" ></script>
+<script src="__STATIC__/assets/laydate/laydate.js" type="text/javascript"></script>
+<script type="text/javascript" src="__STATIC__/Widget/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="__STATIC__/Widget/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="__STATIC__/Widget/zTree/js/jquery.ztree.all-3.5.min.js"></script>
+<script type="text/javascript" src="__STATIC__/Widget/Validform/5.3.2/Validform.min.js"></script>
+<script type="text/javascript" src="__STATIC__/Widget/webuploader/0.1.5/webuploader.min.js"></script>
+<script type="text/javascript" src="__STATIC__/Widget/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="__STATIC__/Widget/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="__STATIC__/Widget/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<script src="__STATIC__/js/lrtk.js" type="text/javascript" ></script>
+<script type="text/javascript" src="__STATIC__/js/H-ui.js"></script>
+<script type="text/javascript" src="__STATIC__/js/H-ui.admin.js"></script>
+<div class="page_right_style">
+	<div class="type_title">添加书籍</div>
+	<form method="post" action='http://localhost:8080/admin/book/insert'class="form form-horizontal" id="form-article-add">
+		<div class=" clearfix cl">
+			<label class="form-label col-2">图书索引：</label>
+			<div class="formControls col-10">
+				<input type="text" class="input-text" value="" placeholder="" id="bookId" name="book_id">
+			</div>
+		</div>
+		<div class=" clearfix cl">
+			<label class="form-label col-2">书名：</label>
+			<div class="formControls col-10">
+				<input type="text" class="input-text" value="" placeholder="" id="bookName" name="book_name">
+			</div>
+		</div>
+
+		<div class=" clearfix cl">
+			<label class="form-label col-2">图书类型：</label>
+			<div class="formControls col-10">
+				<select id="bookType"  name="book_type_id">
+					<option value="A">马克思主义、列宁主义、毛泽东思想、邓小平理论</option>
+					<option value="B">哲学、宗教</option>
+					<option value="C">社会科学总论</option>
+					<option value="D">政治、法律</option>
+					<option value="E">军事</option>
+					<option value="F">经济</option>
+					<option value="G">文化科学、教育、体育</option>
+					<option value="H">语言、文字</option>
+					<option value="I">文学</option>
+					<option value="J">艺术</option>
+					<option value="K">历史、地理</option>
+					<option value="N">自然科学总论</option>
+					<option value="O">数理科学和化学</option>
+					<option value="P">天文学、地球科学</option>
+					<option value="Q">生物科学</option>
+					<option value="R">医药、卫生</option>
+				</select>
+			</div>
+		</div>
+		<div class=" clearfix cl">
+			<label class="form-label col-2">图书介绍：</label>
+			<div class="formControls col-10">
+				<input type="text" class="input-text" value="" placeholder="" id="bookIntro" name="book_intro">
+			</div>
+		</div>
+		<div class=" clearfix cl">
+			<label class="form-label col-2">价格：</label>
+			<div class="formControls col-10">
+				<input type="text" class="input-text" value="" placeholder="" id="bookPrice" name="book_price">
+			</div>
+		</div>
+		<div class=" clearfix cl">
+			<label class="form-label col-2">数量：</label>
+			<div class="formControls col-10">
+				<input type="text" class="input-text" value="" placeholder="" id="bookQuantity" name="book_quantity">
+			</div>
+		</div>
+		<div class=" clearfix cl">
+			<label class="form-label col-2">作者：</label>
+			<div class="formControls col-10">
+				<input type="text" class="input-text" value="" placeholder="" id="bookAuthor" name="book_author">
+			</div>
+		</div>
+		<div class=" clearfix cl">
+			<label class="form-label col-2">译者：</label>
+			<div class="formControls col-10">
+				<input type="text" class="input-text" value="" placeholder="" id="bookTranslator" name="book_translator">
+			</div>
+		</div>
+		<div class=" clearfix cl">
+			<label class="form-label col-2">国家编号：</label>
+			<div class="formControls col-10">
+				<select id="countryId"  name="country_id">
+					<option value="1">中国</option>
+					<option value="2">美国</option>
+					<option value="3">英国</option>
+					<option value="4">法国</option>
+					<option value="5">德国</option>
+					<option value="6">俄罗斯</option>
+					<option value="7">日本</option>
+					<option value="8">韩国</option>
+					<option value="9">其他国家</option>
+				</select>
+			</div>
+		</div>
+		<div class=" clearfix cl">
+			<label class="form-label col-2">出版社：</label>
+			<div class="formControls col-10">
+				<select id="publishId" name="publish_id">
+					<option value="1">人民出版社</option>
+					<option value="2">清华大学出版社</option>
+					<option value="3">电子工业出版社</option>
+					<option value="4">高等教育出版社</option>
+					<option value="5">其他</option>
+					<option value="6">意林出版社</option>
+				</select>
+			</div>
+		</div>
+		<div class=" clearfix cl">
+			<label class="form-label col-2">出版社日期：</label>
+			<div class="formControls col-10">
+				<input type="text" class="input-text" value="" placeholder="" name="book_publish_date" id="bookPublishdate">
+			</div>
+		</div>
+		<div class=" clearfix cl">
+			<label class="form-label col-2">馆藏位置：</label>
+			<div class="formControls col-10">
+				<select  id="locationId" name="location_id" >
+					<option value="2">参考咨询部</option>
+					<option value="3">办公室</option>
+					<option value="4">信息技术服务部</option>
+					<option value="5">复印室</option>
+					<option value="6">自然科学综合书库</option>
+					<option value="7">工业技术专业书库</option>
+					<option value="8">多媒体阅览室</option>
+					<option value="9">法律、经济专业书库</option>
+					<option value="10">社会科学综合书库</option>
+					<option value="11">文学、艺术、历史专业书库</option>
+					<option value="12">过刊阅览室</option>
+					<option value="13">自然科学报刊阅览室</option>
+					<option value="14">社会科学报刊阅览室</option>
+					<option value="15">过报室</option>
+					<option value="16">学位论文室、西文书库</option>
+					<option value="17">医学专业库</option>
+					<option value="102">总服务台</option>
+				</select>
+			</div>
+		</div>
+		<div class="clearfix cl">
+			<label class="form-label col-2">书本封面： </label>
+			<div class="formControls col-10">
+				<input type="text" class="input-text" value="" placeholder="" name="book_cover" id="bookCover">
+			</div>
+		</div>
+
+		<div class="col-sm-10 col-sm-offset-2">
+			<input  type="submit" class="btn btn-primary" value="添加图书"></input>
+		</div>
+	</form>
+</div>
+</div>
+</div>
+
+<script>
+    laydate({
+        elem: '#bookPublishdate',
+        event: 'focus'
+    });
+    $(function() {
+        $("#add_picture").fix({
+            float : 'left',
+            skin : 'green',
+            durationTime :false,
+            stylewidth:'220',
+            spacingw:0,
+            spacingh:260,
+        });
+    });
+    $( document).ready(function(){
+//初始化宽度、高度
+
+        $(".widget-box").height($(window).height());
+        $(".page_right_style").height($(window).height());
+        $(".page_right_style").width($(window).width()-220);
+        //当文档窗口发生改变时 触发
+        $(window).resize(function(){
+
+            $(".widget-box").height($(window).height());
+            $(".page_right_style").height($(window).height());
+            $(".page_right_style").width($(window).width()-220);
+        });
+    });
+    $(function(){
+        var ue = UE.getEditor('editor');
+    });
+    /******树状图********/
+    var setting = {
+        view: {
+            dblClickExpand: false,
+            showLine: false,
+            selectedMulti: false
+        },
+        data: {
+            simpleData: {
+                enable:true,
+                idKey: "id",
+                pIdKey: "pId",
+                rootPId: ""
+            }
+        },
+        callback: {
+            beforeClick: function(treeId, treeNode) {
+                var zTree = $.fn.zTree.getZTreeObj("tree");
+                if (treeNode.isParent) {
+                    zTree.expandNode(treeNode);
+                    return false;
+                } else {
+                    demoIframe.attr("src",treeNode.file + ".html");
+                    return true;
+                }
+            }
+        }
+    };
+
+    var code;
+
+    function showCode(str) {
+        if (!code) code = $("#code");
+        code.empty();
+        code.append("<li>"+str+"</li>");
+    }
+    //    $(document).ready(function(){
+    //        var t = $("#treeDemo");
+    //        t = $.fn.zTree.init(t, setting, zNodes);
+    //        demoIframe = $("#testIframe");
+    //        //demoIframe.bind("load", loadReady);
+    //        var zTree = $.fn.zTree.getZTreeObj("tree");
+    //        //zTree.selectNode(zTree.getNodeByParam("id",'11'));
+    //    });
+</script>
+</body>
+</html>

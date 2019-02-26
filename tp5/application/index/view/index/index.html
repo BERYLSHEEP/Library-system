@@ -1,0 +1,76 @@
+{layout name="./common/father" \}
+
+<!--主体-->
+<section id="home">
+    <div class="lvjing">
+        <div class="container container-home">
+            <h1>图书馆</h1>
+            <div class="col-sm-3">
+                <select id="test"  name="">
+                    <option   value="2">书名</option>
+                    <option   value="1">任意词</option>
+                    <option   value="3">作者</option>
+                    <option   value="4">期刊名</option>
+                    <option   value="5">出版社</option>
+                </select>
+            </div>
+            <div class="col-sm-9">
+                <div class="input-group">
+                    <input id="words" type="text" class="form-control" onkeydown="">
+                    <span id="search" class="btn btn-default input-group-addon">搜索</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--尾部-->
+<nav class="navbar-fixed-bottom" role="navigation">
+    <ol class="breadcrumb navbar-default navbar-right">
+        <li><a id="sendfeedback">意见反馈</a></li>
+        <li><a id="about">关于</a></li>
+    </ol>
+</nav>
+
+<script>
+    $("#search").click(function () {
+        //为了传中文,加密
+        window.location.href=encodeURI("/sresult?words="+$("#test option:selected").val()+"="+$("#words").val());
+    });
+    //回车事件
+    document.onkeydown=function (e) {
+        if(e.keyCode==13){
+            window.location.href=encodeURI("/sresult?words="+$("#test option:selected").val()+"="+$("#words").val());
+        }
+    };
+    //发送反馈
+    $("#sendfeedback").click(function () {
+        var content;
+        content =  prompt("亲有什么意见或建议吗？");
+        console.log(content);
+        $.ajax({
+            type:'post',
+            url:'/feedback',
+            async:false,
+            dataType:'json',
+            data:{
+                content:content
+            },
+            success:function (resD) {
+                let res = JSON.parse(resD);
+                if(res["isSucceed"]==1){
+                    alert("您的意见已经提交啦！");
+                }
+                if(res["error"]==1){
+                    alert("亲亲还没有登录呢");
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        })
+    });
+    $("#about").click(function () {
+        alert("华工小分队")
+    });
+</script>

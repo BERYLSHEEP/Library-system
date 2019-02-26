@@ -1,0 +1,185 @@
+{layout name="./common/father" \}
+
+<div class="container container-signup" id="container-signup">
+    <h1>注册</h1>
+    <h5>*为必填信息</h5>
+    <form id="signupform" class="form-horizontal" role="form">
+        <div class="col-sm-3"></div>
+
+        <div class="form-group col-sm-9">
+            <div class="radio-inline col-sm-6">
+                <label>
+                    <input id="tsignup" name="options" type="radio" value="1">教师注册
+                </label>
+            </div>
+            <div class="radio-inline">
+                <label>
+                    <input id="ssignup" name="options" type="radio" value="2">学生注册
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-3">*学号/教职工号</label>
+            <div class="col-sm-9">
+                <input id="reader" name="reader" type="text" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-3">*姓名</label>
+            <div class="col-sm-9">
+                <input id="rname" name="rname" type="text" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-3">*学院</label>
+            <div class="col-sm-9">
+                <select id="college">
+                    <option   value="1">经济与贸易学院</option>
+                    <option   value="2">物理与光电学院</option>
+                    <option   value="3">数学学院</option>
+                    <option   value="4">工商管理学院</option>
+                    <option   value="5">外国语学院</option>
+                    <option   value="6">计算机科学与工程学院</option>
+                    <option   value="7">软件学院</option>
+                    <option   value="8">生物学院</option>
+                    <option   value="9">土木与交通学院</option>
+                    <option   value="10">体育学院</option>
+                    <option   value="11">其他</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-3">*密码</label>
+            <div class="col-sm-9">
+                <input id="password" name="password" type="password" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3">*确认密码</label>
+            <div class="col-sm-9">
+                <input name="confirm_password" type="password" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3">*邮箱</label>
+            <div class="col-sm-9">
+                <input id="email" name="email" type="text" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3">电话</label>
+            <div class="col-sm-9">
+                <input id="phone" name="phone" type="text" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-9 col-sm-offset-3">
+                <span class="btn btn-block" >注册</span>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    $().ready(function () {
+        $("#signupform").validate({
+            rules: {
+                options:{
+                    required:true,
+                },
+                reader:{
+                    required:true,
+                    minlength:10,
+                    maxlength:10
+                },
+                rname:{
+                    required:true,
+                    minlength:2,
+                },
+                password:{
+                    required:true,
+                    minlength:6,
+                    maxlength:20
+                },
+                confirm_password:{
+                    required:true,
+                    minlength:6,
+                    equalTo: "#password"
+                },
+                email:{
+                    required:true,
+                    email:true
+                },
+                phone:{
+                    minlength:11,
+                    maxlength:11
+                }
+            },
+            messages: {
+                options:{
+                    required:"请选择一种登陆方式"
+                },
+                reader:{
+                    required: "请输入学号/教职工号",
+                    minlength:"学号/教职工号应由10位数字构成",
+                    maxlength:"学号/教职工号应由10位数字构成"
+                },
+                rname:{
+                    required:"请输入姓名",
+                    minlength:"姓名长度不得小于2",
+                },
+                password: {
+                    required:"请输入密码",
+                    minlength:"密码长度不小于6"
+                },
+                confirm_password: {
+                    required:"请再次输入密码",
+                    minlength:"密码长度不小于6",
+                    equalTo:"两次密码输入不一致"
+                },
+                email: "请输入正确的邮件地址",
+                phone: {
+                    minlength:"请输入正确的电话号码",
+                    maxlength:"请输入正确的电话号码"
+                }
+            }
+        })
+    });
+    $(".btn").click(function () {
+        $.ajax({
+            type:'post',
+            url:'/index/register',
+            dataType:'json',
+            async:false,
+            data:{
+                userId:$("#reader").val(),
+                password:$("#password").val(),
+                type:$('input[name="options"]:checked').val(),
+                userName:$("#rname").val(),
+                college:$("#college option:selected").val(),
+                mail:$("#email").val(),
+                tel:$("#phone").val()
+            },
+            success:function (resD) {
+                let res = JSON.parse(resD);
+                console.log(res);
+                if(eval(res["isSucceed"])==1){
+                    alert("注册成功,请等待审核通过");
+                    window.location.href="/index";
+                }
+                else{
+                    alert("注册失败")
+                }
+            },
+            error:function () {
+                console.log(555);
+            }
+        })
+    })
+</script>
